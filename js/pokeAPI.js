@@ -1,16 +1,8 @@
 const regionAPI = `https://pokeapi.co/api/v2/region/`;
 const typeAPI = `https://pokeapi.co/api/v2/type/`;
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-function getDataEachElement(apiURL){
-    return fetch(apiURL)
-        .then(response => {
-            if(!response.ok){
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        });
-}
-
+//display-------------------------------------------------------------
 function colorOfCard(color){
     switch(color){
         case"normal":{
@@ -76,38 +68,10 @@ function colorOfCard(color){
     }
 }
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-//ALL CARD 
-//--------------------------------------------------------------------------
-
-function getListAPI(count = 1, option){
-    let apiUrl;
-    if (option == "all"){
-        if (count > 0){
-            count = count - 1;
-            count = count * 20;
-        } 
-        apiUrl = `https://pokeapi.co/api/v2/pokemon/?offset=${count}&limit=20`;}
-    else if (option == "type"){
-        apiUrl = `https://pokeapi.co/api/v2/type/`;
-    }
-    else if (option == "region"){
-        apiUrl = `https://pokeapi.co/api/v2/region/`;
-    }
-    return fetch(apiUrl)
-        .then(response => {
-            if(!response.ok){
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        });
-}
-
 function createCard(data) {
     const container = document.getElementById('main');
     const card = document.createElement('div');
-    card.className = 'pokemon-card';
+    card.classList = "pokemon-card remove";
 
     const imageBox = document.createElement('div');
     imageBox.className ='image-box';
@@ -141,6 +105,71 @@ function createCard(data) {
     container.appendChild(card);
 }
 
+function createButton(content, color, parent_query, child_className){
+    const types = document.querySelector(parent_query);
+    const buttonType = document.createElement("button");
+    buttonType.className = child_className; 
+
+    buttonType.textContent = content;
+    const boder = `2px solid ${color}`;
+    const shadow = `0 0 2px ${color}`
+    buttonType.style.setProperty("border", boder);
+    buttonType.style.setProperty("box-shadow", shadow); 
+    buttonType.style.setProperty("color", color); 
+
+    types.appendChild(buttonType);
+}
+
+function displayNotFound(){
+    const main = document.getElementById("main");
+    const box = document.createElement("div"); 
+    box.className = "remove";
+    box.textContent = "NotFound";
+    main.appendChild(box);
+}
+
+function removeCard(){
+    const cardDef = document.querySelectorAll(".remove"); 
+        cardDef.forEach(element => {
+            element.style.setProperty("display", "none"); 
+        });
+}
+
+//fetch API---------------------------------------------------------------------
+function getListAPI(count = 1, option){
+    let apiUrl;
+    if (option == "all"){
+        if (count > 0){
+            count = count - 1;
+            count = count * 20;
+        } 
+        apiUrl = `https://pokeapi.co/api/v2/pokemon/?offset=${count}&limit=20`;}
+    else if (option == "type"){
+        apiUrl = `https://pokeapi.co/api/v2/type/`;
+    }
+    else if (option == "region"){
+        apiUrl = `https://pokeapi.co/api/v2/region/`;
+    }
+    return fetch(apiUrl)
+        .then(response => {
+            if(!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        });
+}
+
+function getDataEachElement(apiURL){
+    return fetch(apiURL)
+        .then(response => {
+            if(!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        });
+}
+
+//Render------------------------------------------------------------------------
 function renderCard(count) {
     getListAPI(count, "all")
         .then(list => {
@@ -171,7 +200,7 @@ function renderCardByCount() {
             const maxCount = Math.ceil(list.count/ 20);
             const divMore = document.getElementById("more_button");
             const moreButton = document.createElement("div");
-            moreButton.className = "moreButton";
+            moreButton.classList = "moreButton remove";
             moreButton.textContent = "More";
             divMore.appendChild(moreButton);
 
@@ -187,27 +216,7 @@ function renderCardByCount() {
         })
         .catch(error => {
             console.error("Error fetching API data:", error);
-        });
-}
-
-renderCardByCount();
-
-//FILTER 
-//----------------------------------------------------------------
-
-function createButton(content, color, parent_query, child_className){
-    const types = document.querySelector(parent_query);
-    const buttonType = document.createElement("button");
-    buttonType.className = child_className; 
-
-    buttonType.textContent = content;
-    const boder = `2px solid ${color}`;
-    const shadow = `0 0 2px ${color}`
-    buttonType.style.setProperty("border", boder);
-    buttonType.style.setProperty("box-shadow", shadow); 
-    buttonType.style.setProperty("color", color); 
-
-    types.appendChild(buttonType);
+        });   
 }
 
 function renderButton(type, color, parent_query, child_className){
@@ -224,7 +233,62 @@ function renderButton(type, color, parent_query, child_className){
         })
 }
 
+function searchBy(){
+    const form = document.getElementById("searchBar");
+    form.addEventListener("submit", function(event){
+        event.preventDefault(); 
+        const input = document.getElementById("searchBar_input").value;
+        removeCard();
+        if (!isNaN(input)){
+            const id = input; 
+            const apiURL = `https://pokeapi.co/api/v2/pokemon/${id}/`;
+                        getDataEachElement(apiURL)
+                            .then(data => {
+                                createCard(data);
+                            })
+                            .catch(error => {
+                                console.error("Not Found");
+                                displayNotFound();
+                            })       
+        } else{
+            getListAPI(1,"all")
+                .then(list =>{
+                    const max = Math.ceil(list.count/ 20);
+                    for (let i = 1; i <= max; i++){
+                        getListAPI(i, "all")
+                            .then(sub => {
+                                for(let n = 0; n <20; n++){
+                                    const name = sub.results[n].name;
+                                    if(name.includes(input)){
+                                        const apiURL = sub.results[n].url;
+                                        getDataEachElement(apiURL)
+                                        .then(data => {
+                                            createCard(data);
+                                        })
+                                        .catch(error => {
+                                            console.error("Error fetching API data:", error);
+                                        })       
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error fetching API data:", error);
+                            });   
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching API data:", error);
+                });   
+        }
+    })
+}
+
+//call--------------------------------------------------------------------------
+renderCardByCount();
 renderButton("type", "white", ".filter_types", "filter_type");
 renderButton("region", "white", ".filter_places", "filter_place");
+searchBy();
+
+
 
 
