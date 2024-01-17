@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/pokedex.css">
+    <link rel="stylesheet" href="../css/universe.css">
+    <link rel="shortcut icon" href="../asset/pokeBallUni.png" type="image/x-icon">
+    <title>FE2 with love</title>
+</head>
+<body>
+    <div class="container">
+        <div class="stars"></div>
+        <header>
+            <div class="overlay"></div>
+            <div class="header_inner">
+                <div class="header_icon">
+                    <img src="../asset/Pokémon_logo.png" alt="pokemonLogo">
+                </div>
+                <nav class="header_nav">
+                    <a href="../index.html">Home</a>
+                    <a href="./pokedex.html">Pokedex</a>
+                    <a href="./game.html">Game</a>
+                    <a href="./contact.html">Contact</a>
+                </nav>
+            </div>
+        </header>
+        <main>
+            <div class="main_inner">
+                <div class="main_filter">
+                    <div class="main_filter--searchBar">
+                        <form action="" id="search_bar">
+                            <input type="text" placeholder="Enter some text" name="search" id="search_input">
+                            <input id="input2" type="submit">
+                        </form>
+                    </div>
+                    <div class="main_filter--option">
+                        <form action="">
+                            <label for=""></label> <br>
+                            
+                            <div class="filter_types">
+                                <label for="">Types</label> <br>
+                            </div>
+                            <div class="filter_slider">
+                                <p>Value: <span id="demo"></span></p>
+                                <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                            </div>
+                            <div class="filter_places">
+                                <label for="">Place</label> <br>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="main_list">
+                    <div class="main_list--count"></div>
+                    <div class="main_list--cards" id="main"></div>
+                    <div id="more_button"></div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div class="overlay-f"></div>
+            <p class="coryRight">©2024 All Rights Reserved.</p>
+        </footer>
+    </div>
+</body>
+<script src="../js/pokedex.js"></script>
+<script src="../js/universe.js"></script>
+<script src="../js/pokeAPI.js"></script>
+</html>

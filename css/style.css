@@ -1,0 +1,47 @@
+body{
+    background-color: rgb(15,23,42);
+}
+
+header{
+    border-bottom: 1px solid rgb(34,59,87); 
+}
+
+footer{
+    margin-top: auto;
+    color: white;
+    magin-left: auto;
+    height: 50px;
+}
+
+header a {
+    color: rgb(199,207,219);
+}
+
+
+.container{
+    max-width: 1400px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.header_icon img{
+    width: 150px;
+    heigth: 50px;
+}
+
+.header_inner{
+    display: flex; 
+    margin: 5px 30px;
+    justify-content: space-between;
+}
+
+.header_nav{
+    margin: auto 0; 
+    margin-right: 30px;
+}
+
+.header_nav a{
+    padding: 0 5px;
+    font-size: 18px;
+}
