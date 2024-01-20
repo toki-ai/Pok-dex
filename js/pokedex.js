@@ -324,6 +324,5 @@ function filterne(){
 //call--------------------------------------------------------------------------
 renderCardByCount();
 renderButton("type", "white", ".filter_types", "filter_type");
-renderButton("region", "white", ".filter_places", "filter_place");
 searchBy();
 filterne();
