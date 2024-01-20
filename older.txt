@@ -1,0 +1,36 @@
+let countLocation = 0;
+let listLocation = [];
+
+//getListAPI
+    else if (option == "region"){
+        apiUrl = `https://pokeapi.co/api/v2/region/`;
+    }
+//createButton(option)
+else if(option == "location"){
+                const maxClick = 1; 
+                if (!isClicked) {
+                    if (countLocation< maxClick){
+                        buttonType.style.setProperty("background-color", `${color}`);
+                        buttonType.style.setProperty("color", 'black');
+                        countLocation++; 
+                        listLocation.push(buttonType.textContent);
+                        isClicked = !isClicked;
+                    } 
+                    else{
+                        alert(`${maxClick} is maximum!`);
+                    }
+                } else {
+                    for (let i = 0; i < listLocation.length; i++){
+                        if (listLocation[i] == (buttonType.textContent)){
+                            buttonType.style.setProperty("background-color", "transparent");
+                            buttonType.style.setProperty("color", `${color}`);
+                            listLocation.splice(i, 1);
+                            countLocation--;
+                            isClicked = !isClicked;
+                        }
+                    }
+                }
+            }
+// HTML                          <div class="filter_places">
+                                <label for="">Place</label> <br>
+                            </div>

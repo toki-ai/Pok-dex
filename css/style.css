@@ -1,5 +1,5 @@
 body{
-    background-color: rgb(15,23,42);
+    background-color: black;
 }
 
 header{
@@ -34,6 +34,7 @@ header a {
     display: flex; 
     margin: 5px 30px;
     justify-content: space-between;
+    height: 60px;
 }
 
 .header_nav{
