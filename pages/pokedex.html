@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/pokedex.css">
     <link rel="stylesheet" href="../css/universe.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="../assets/image/pokeBallUni.png" type="image/x-icon">
     <title>FE2 with love</title>
 </head>
@@ -25,16 +28,18 @@
                 <nav class="header_nav">
                     <a href="../index.html">Home</a>
                     <a href="./pokedex.html">Pokedex</a>
-                    <a href="./game.html">Game</a>
+                    <a href="./other.html">Other</a>
                     <a href="./contact.html">Contact</a>
                 </nav>
             </div>
         </header>
         <main>
-            <div class="main_inner">
+            <div id="main_specific"></div>
+            <div id="main_inner" class="main_inner">
                 <div class="main_filter">
                     <div class="main_filter--searchBar">
                         <form action="" id="searchBar">
+                            <label for="">Search</label> <br>
                             <input type="text" placeholder="Enter name or id" name="search" id="searchBar_input">
                             <input id="searchBar_submit" type="submit">
                         </form>
@@ -42,18 +47,22 @@
                     <div class="main_filter--option">
                         <form action="">
                             <label for=""></label> <br>
-                            
+                            <label for="">Evolve</label>
+                            <div class="filter_evolve">
+                                <div class="evolve--mega" id="mega">Mega</div>
+                                <div class="evolve--gmax" id="gmax">Gmax</div>
+                            </div> 
+                            <label for="">Types</label> <br>
                             <div class="filter_types">
-                                <label for="">Types</label> <br>
                             </div>
                         </form>
-                        <div id="abc"></div>
+                        <div id="button--filter"></div>
                     </div>
                 </div>
                 <div class="main_list">
                     <div class="main_list--count"></div>
                     <div class="main_list--cards" id="main"></div>
-                    <div id="more_button"></div>
+                    <div id="button--more"></div>
                 </div>
             </div>
         </main>

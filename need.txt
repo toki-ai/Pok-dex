@@ -1,3 +1,48 @@
+done 1. Mega, Gmax: cắt từ tên ra 
+done 2. Filter type
+3. Làm page lẻ
+4. Homapage nữa má ơi 
+
+//create card()
+card.addEventListener('click', function() {
+        showDetailPage(data.id);
+    });
+
+function showDetailPage(pokemonId) {
+    window.location.href = 'detail.html?id=' + pokemonId;
+}
+
+5. Game: 
+<div> List abc</div>
+nav 
+    - Evolue: 
+    https://pokeapi.co/api/v2/evolution-chain/id/ 
+    evolue id -> group theo speci ->img and mũi tên 
+    - Generation : 9 
+    https://pokeapi.co/api/v2/generation/
+    gen id -> poke speci -> varities -> pokeapi 
+    - Items: https://pokeapi.co/api/v2/item/1/ 
+    https://pokemondb.net/item/all
+        + Name
+        + Category
+        + Effect 
+    - Ability: (max=20) 
+    https://pokemondb.net/ability
+        => filter name 
+        => generation 
+        + Name
+        + Effect (lang = en)
+        + Gen
+        + Bao nhiêu con có cái đó  array pokemon (có api  lẻ từng con trong api á siêng thì thêm)  
+
+6. Styles 
+
+7. Other nếu rảnh (chắc chắn nà khom roài)
+    - Location: https://pokemondb.net/location
+    - Pokémon sprite archive: https://pokemondb.net/sprites 
+    - Move 
+
+=>> nhét đỡ kím 
 let countLocation = 0;
 let listLocation = [];
 

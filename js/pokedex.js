@@ -74,7 +74,9 @@ function createCard(data) {
     const gradien = `linear-gradient(to top,${color} 20%, rgb(5,11,26) 60% )`;
     card.style.setProperty('background', gradien);
     card.classList = "pokemon-card remove";
-
+    card.addEventListener('click', function() {
+        showDetailPage(data);
+    });
     const imageBox = document.createElement('div');
     imageBox.className ='image-box';
     card.appendChild(imageBox);
@@ -85,18 +87,39 @@ function createCard(data) {
     imageBox.appendChild(imageElement);
     
     const idElement = document.createElement('h3');
-    idElement.textContent = data.id;
+    idElement.textContent = `#${data.id}`;
     card.appendChild(idElement);
 
     const nameElement = document.createElement('h2');
     nameElement.textContent = data.name;
+    nameElement.className = "pokemon-name";
     card.appendChild(nameElement);
-    const typesElement = document.createElement('p');
-    typesElement.textContent = 'Types: ' + data.types.map(type => type.type.name).join(', ');
-    card.appendChild(typesElement);
 
+    const types = document.createElement('p');
+    types.classList = "button--types";
+    const leng = data.types.length;
+    for (let i = 0; i < leng; i++){
+        const type = document.createElement('span');
+        type.textContent = data.types[i].type.name;
+        const color = colorOfCard(data.types[i].type.name);
+        type.classList = "button--type"; 
+        type.style.setProperty("background-color", color);
+        types.appendChild(type);
+    }
+    card.appendChild(types);
     container.appendChild(card);
 }
+
+function showDetailPage(data) {
+    const main = document.getElementById("main_inner"); 
+    main.style.setProperty("display", "none");
+    console.log(data.name);
+    const card = document.getElementById("main_specific");
+    const nameElement = document.createElement('h2');
+    nameElement.className = "displayCoi";
+    nameElement.textContent = data.name;
+    card.appendChild(nameElement);
+} 
 
 function createButton(content, color, parent_query, child_className, i){
     const types = document.querySelector(parent_query);
@@ -115,10 +138,10 @@ function createButton(content, color, parent_query, child_className, i){
                 const maxClick = 2;
                 if (!isClicked) {
                     if (countClick < maxClick){
-                        buttonType.style.setProperty("background-color", `${color}`);
-                        buttonType.style.setProperty("color", 'black');
+                        this.style.setProperty("background-color", `${color}`);
+                        this.style.setProperty("color", 'black');
                         countClick++; 
-                        listTypes.push(buttonType.textContent);
+                        listTypes.push(this.textContent);
                         isClicked = !isClicked;
                     } 
                     else{
@@ -126,9 +149,9 @@ function createButton(content, color, parent_query, child_className, i){
                     }
                 } else {
                     for (let i = 0; i < listTypes.length; i++){
-                        if (listTypes[i] == (buttonType.textContent)){
-                            buttonType.style.setProperty("background-color", "transparent");
-                            buttonType.style.setProperty("color", `${color}`);
+                        if (listTypes[i] == (this.textContent)){
+                            this.style.setProperty("background-color", "transparent");
+                            this.style.setProperty("color", `${color}`);
                             listTypes.splice(i, 1);
                             countClick--;
                             isClicked = !isClicked;
@@ -142,7 +165,7 @@ function createButton(content, color, parent_query, child_className, i){
 function displayNotFound(){
     const main = document.getElementById("main");
     const box = document.createElement("div"); 
-    box.className = "remove";
+    box.classList = "remove notFound";
     box.textContent = "NotFound";
     main.appendChild(box);
 }
@@ -219,9 +242,9 @@ function renderCardByCount() {
     getListAPI(1, "all")
         .then(list => {
             const maxCount = Math.ceil(list.count/ 20);
-            const divMore = document.getElementById("more_button");
+            const divMore = document.getElementById("button--more");
             const moreButton = document.createElement("div");
-            moreButton.classList = "moreButton remove";
+            moreButton.classList = "button--more remove button";
             moreButton.textContent = "More";
             divMore.appendChild(moreButton);
 
@@ -262,10 +285,13 @@ function searchBy(){
     const form = document.getElementById("searchBar");
     form.addEventListener("submit", function(event){
         event.preventDefault(); 
-        const input = document.getElementById("searchBar_input").value;
-        console.log(input);
+        const input = document.getElementById("searchBar_input").value; 
+        let countFinding = 0;
         removeCard();
-        if (!isNaN(input)){
+        if (input == ""){
+            renderCardByCount();
+        }
+        else if (!isNaN(input)){
             const id = input; 
             const apiURL = `https://pokeapi.co/api/v2/pokemon/${id}/`;
                         getDataEachElement(apiURL)
@@ -276,7 +302,7 @@ function searchBy(){
                                 console.error("Not Found");
                                 displayNotFound();
                             })       
-        } else{
+        } else{ 
             getListAPI(1,"all")
                 .then(list =>{
                     const max = (Math.ceil(list.count/ 20)) - 1;
@@ -287,6 +313,50 @@ function searchBy(){
                                     const name = sub.results[n].name;
                                     if(name.includes(input)){
                                         const apiURL = sub.results[n].url;
+                                        removeCard();
+                                        getDataEachElement(apiURL)
+                                        .then(data => {
+                                            createCard(data);
+                                            countFinding++;
+                                        })
+                                        .catch(error => {
+                                            console.error("Error fetching API data:", error);
+                                        })       
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error fetching API data:", error);
+                            });   
+                    }
+                    if(countFinding == 0){
+                        displayNotFound();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching API data:", error);
+                });   
+        }
+    })
+}
+
+function sortEvolve(id){
+    var myDiv = document.getElementById(id);
+    if (myDiv) {
+        myDiv.addEventListener('click', function() {
+            const content = `-${(this.innerHTML).toLocaleLowerCase()}`;
+            console.log(content)
+            getListAPI(1,"all")
+                .then(list =>{
+                    const max = (Math.ceil(list.count/ 20)) - 1;
+                    for (let i = 1; i <= max; i++){
+                        getListAPI(i, "all")
+                            .then(sub => {
+                                for(let n = 0; n <20; n++){
+                                    const name = sub.results[n].name;
+                                    if(name.includes(content)){
+                                        const apiURL = sub.results[n].url;
+                                        removeCard();
                                         getDataEachElement(apiURL)
                                         .then(data => {
                                             createCard(data);
@@ -305,18 +375,67 @@ function searchBy(){
                 .catch(error => {
                     console.error("Error fetching API data:", error);
                 });   
-        }
-    })
+        });
+    }
 }
 
-function filterne(){
-    const main = document.getElementById("abc"); 
+function countCommonElements(array1, array2) {
+    var commonElements = array1.filter(element => array2.includes(element));
+    return commonElements.length;
+  }
+
+function filterType(){
+    const main = document.getElementById("button--filter"); 
     const button = document.createElement("div"); 
-    button.textContent = "filter"; 
-    button.classList = "moreFilter"; 
+    button.textContent = "Filter"; 
+    button.classList = "button--filter button"; 
     button.addEventListener("click", function(){
-        console.log(listTypes);
-        console.log(listLocation);
+        const leng = listTypes.length; 
+        let countFinding = 0;
+        removeCard();
+            getListAPI(1,"all")
+                .then(list =>{
+                    const max = (Math.ceil(list.count/ 20)) - 1;
+                    for (let i = 1; i <= max; i++){
+                        getListAPI(i, "all")
+                            .then(sub => {
+                                for(let n = 0; n <20; n++){
+                                    const name = sub.results[n].name;
+                                    const apiURL = sub.results[n].url;
+                                    removeCard();
+                                    getDataEachElement(apiURL)
+                                        .then(data => {
+                                            let dataTypes = [];
+                                            data.types.forEach(e => {
+                                                dataTypes.push(e.type.name);
+                                            })
+                                            const commonCount = countCommonElements(dataTypes, listTypes);
+                                            if (commonCount == leng){
+                                                createCard(data);
+                                                countFinding++;
+                                            }
+                                             
+                                        })
+                                        .catch(error => {
+                                            console.error("Error fetching API data:", error);
+                                        })       
+                                    
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error fetching API data:", error);
+                            });   
+                    }
+                    if(countFinding == 0){
+                        displayNotFound();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching API data:", error);
+                });   
+        
+
+        // }
     })
     main.appendChild(button);
 }
@@ -325,4 +444,6 @@ function filterne(){
 renderCardByCount();
 renderButton("type", "white", ".filter_types", "filter_type");
 searchBy();
-filterne();
+filterType();
+sortEvolve("mega");
+sortEvolve("gmax");
