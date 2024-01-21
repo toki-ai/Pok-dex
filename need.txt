@@ -1,18 +1,9 @@
-done 1. Mega, Gmax: cắt từ tên ra 
-done 2. Filter type
+1. Mega, Gmax: cắt từ tên ra 
+2. Filter type
 3. Làm page lẻ
 4. Homapage nữa má ơi 
 
-//create card()
-card.addEventListener('click', function() {
-        showDetailPage(data.id);
-    });
-
-function showDetailPage(pokemonId) {
-    window.location.href = 'detail.html?id=' + pokemonId;
-}
-
-5. Game: 
+5. Other: 
 <div> List abc</div>
 nav 
     - Evolue: 
@@ -37,45 +28,7 @@ nav
 
 6. Styles 
 
-7. Other nếu rảnh (chắc chắn nà khom roài)
+7. Other
     - Location: https://pokemondb.net/location
     - Pokémon sprite archive: https://pokemondb.net/sprites 
     - Move 
-
-=>> nhét đỡ kím 
-let countLocation = 0;
-let listLocation = [];
-
-//getListAPI
-    else if (option == "region"){
-        apiUrl = `https://pokeapi.co/api/v2/region/`;
-    }
-//createButton(option)
-else if(option == "location"){
-                const maxClick = 1; 
-                if (!isClicked) {
-                    if (countLocation< maxClick){
-                        buttonType.style.setProperty("background-color", `${color}`);
-                        buttonType.style.setProperty("color", 'black');
-                        countLocation++; 
-                        listLocation.push(buttonType.textContent);
-                        isClicked = !isClicked;
-                    } 
-                    else{
-                        alert(`${maxClick} is maximum!`);
-                    }
-                } else {
-                    for (let i = 0; i < listLocation.length; i++){
-                        if (listLocation[i] == (buttonType.textContent)){
-                            buttonType.style.setProperty("background-color", "transparent");
-                            buttonType.style.setProperty("color", `${color}`);
-                            listLocation.splice(i, 1);
-                            countLocation--;
-                            isClicked = !isClicked;
-                        }
-                    }
-                }
-            }
-// HTML                          <div class="filter_places">
-                                <label for="">Place</label> <br>
-                            </div>

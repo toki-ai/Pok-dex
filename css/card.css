@@ -1,0 +1,93 @@
+
+#main_specific, .baseI{
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 10px;
+}
+
+.button--back{
+    margin-top: 10px;
+    margin-left: -450px;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100px;
+    text-shadow: 0 0 5px black;
+    font-size: 30px;
+    background: transparent;
+}
+
+.button--back:hover {
+    cursor: pointer;
+}
+
+.specific_main{
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+}
+
+.specific_stats{
+    display: flex;
+    flex-direction: column; 
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.specific_img{
+    width: 400px;
+    border: 5px solid rgb(116,211,255);
+    box-shadow: 0px 0px 10px 5px rgb(116,211,255, 0.5);
+    border-radius: 50%; 
+}
+
+.specific_id, .specific_name{ 
+    background-color: red;
+    font-size: 25px;
+    border-radius: 50px;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.specific_id{ 
+    min-width: 100px;
+    margin-top: -120px;
+    margin-left: 350px;
+}
+
+.specific_name{ 
+    min-width: 150px;
+    margin-top: 10px;
+    margin-left: 350px;
+}
+
+.base_infomation{
+    background-color: rgb(116,211,255);
+    width: 400px;
+    padding: 30px;   
+    border-radius: 10px;
+}
+
+.abilities{
+    margin-top: 10px;
+}
+
+.ability{
+    padding-right: 20px;
+}
+
+.nameInfor{
+    color: white; 
+    font-size: 14px;
+}
+
+.baseInfor_types{
+    margin-top: 20px;
+}
+
+.baseInfor_type{
+    padding: 5px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-right: 20px;
+}

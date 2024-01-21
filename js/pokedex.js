@@ -111,14 +111,92 @@ function createCard(data) {
 }
 
 function showDetailPage(data) {
-    const main = document.getElementById("main_inner"); 
-    main.style.setProperty("display", "none");
-    console.log(data.name);
-    const element = document.getElementById("main_specific");
-    const nameElement = document.createElement('h2');
-    nameElement.className = "displayCoi";
-    nameElement.textContent = data.name;
-    element.appendChild(nameElement);
+    const cards = document.getElementById("main_inner"); 
+    cards.style.setProperty("display", "none");
+    const main = document.getElementById("main_specific");
+
+    const specific_main = document.createElement("div");
+    specific_main.classList = "specific_main";
+    const backButton = document.createElement("div"); 
+    backButton.className = "button--back"; 
+    backButton.textContent = "🔙";
+    backButton.addEventListener("click", function(event){
+        event.preventDefault();
+        window.location.href = "pokedex.html";
+    })
+    specific_main.appendChild(backButton);
+    main.appendChild(specific_main);
+
+    const imgE = document.createElement('img');
+    imgE.className = "specific_img";
+    imgE.src = data.sprites.other["official-artwork"].front_default;
+    specific_main.appendChild(imgE);
+
+    const idE = document.createElement('div');
+    idE.className = "specific_id";
+    idE.textContent = `#${data.id}`;
+    const color = colorOfCard(data.types[0].type.name);
+    idE.style.setProperty("background-color", color);
+    specific_main.appendChild(idE);
+
+    const namedE = document.createElement('div');
+    namedE.className = "specific_name";
+    const name = data.name;
+    namedE.textContent = `${name.charAt(0).toUpperCase() + name.slice(1)}`;
+    namedE.style.setProperty("background-color", color);
+    specific_main.appendChild(namedE);
+
+    const specific_stats = document.createElement("div"); 
+    specific_stats.classList = "specific_stats";
+
+    const inforTabale = document.createElement("div"); 
+    inforTabale.classList = 'base_infomation';
+    const baseI = document.createElement("div"); 
+    baseI.classList = 'baseI';
+
+    const heightInfor =document.createElement("p"); 
+    heightInfor.innerHTML = `<span class = "nameInfor">Height</span></br><span class = "infor">${data.height}"</span>`;
+    baseI.appendChild(heightInfor);
+
+    const weightInfor =document.createElement("p"); 
+    weightInfor.innerHTML = `<span class = "nameInfor">Weight</span></br><span class = "infor">${data.weight} lbs</span>`;
+    baseI.appendChild(weightInfor);
+
+    inforTabale.appendChild(baseI);
+    const abiInfor = document.createElement("p");
+    abiInfor.classList = 'abilities';
+    abiInfor.innerHTML = `<span class = "nameInfor">Ability</span></br>`;
+    const len = data.abilities.length;
+    for (let i = 0; i < len; i++){
+        const abi = document.createElement('span');
+        const content = data.abilities[i].ability.name;
+        abi.textContent = `${content.charAt(0).toUpperCase() + content.slice(1)}`;
+        abi.classList = "ability"; 
+        abiInfor.appendChild(abi);
+    }
+    inforTabale.appendChild(abiInfor);
+
+    specific_stats.appendChild(inforTabale);
+
+    const types = document.createElement("div");
+    types.classList = `baseInfor_types`;
+    const leng = data.types.length;
+    for (let i = 0; i < leng; i++){
+        const type = document.createElement('span');
+        type.textContent = data.types[i].type.name;
+        const color = colorOfCard(data.types[i].type.name);
+        type.classList = "baseInfor_type"; 
+        type.style.setProperty("background-color", color);
+        types.appendChild(type);
+    }
+    specific_stats.appendChild(types);
+
+    const statsTable = document.createElement("div"); 
+
+    specific_stats.appendChild(statsTable);
+
+    main.appendChild(specific_stats);
+    
 } 
 
 function createButton(content, color, parent_query, child_className, i){
@@ -130,6 +208,7 @@ function createButton(content, color, parent_query, child_className, i){
     const boder = `2px solid ${color}`;
     const shadow = `0 0 2px ${color}`
     buttonType.style.setProperty("border", boder);
+    buttonType.style.setProperty("box-shadow", shadow); 
     buttonType.style.setProperty("box-shadow", shadow); 
     buttonType.style.setProperty("color", color); 
     let isClicked = false; 
