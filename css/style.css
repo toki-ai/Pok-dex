@@ -1,5 +1,8 @@
 body{
-    /* background-color: rgb(5,11,26); */
+    font-family: 'Rubik', sans-serif;
+}
+
+input{
     font-family: 'Rubik', sans-serif;
 }
 
@@ -12,6 +15,12 @@ footer{
     color: white;
     magin-left: auto;
     height: 50px;
+}
+
+.coryRight{
+    padding-top: 20px;
+    font-size:12px;
+    text-align: center;
 }
 
 header a {

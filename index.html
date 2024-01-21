@@ -32,13 +32,20 @@
             <div class="main_inner">
                 <div id="ne" class="random_charracter"></div>
                 <div class="main_content">
-                    <h1 class="cotent_title">Who character?</h1>
-                    <p class="content_descibe">Doan di :></p>
-                    <div class="doanChar">
-                        <input type="text">
-                        <input type="submit">
+                    <h1 class="cotent_title" id="title">Who character?</h1>
+                    <p class="content_descibe" id="descibe">"Are you a true Pokemon fan? Guess the name of the Pokemon next to it."</p>
+                    <div class="content_quiz">
+                        <div class="quiz_input" id="quiz">
+                            <form action="" class="form">
+                                <input type="text" id="quiz_input" placeholder="Enter pokemon name"> 
+                                <input type="submit" value="🔍" id="quiz_submit">
+                            </form>
+                        </div>
+                        <div class="quiz_change">
+                            <input type="submit" value="Hint" id="hint">
+                            <input type="submit" value="Change" id="next">
+                        </div>
                     </div>
-                    <a href="./pages/pokedex.html">Get Started</a>
                 </div>
             </div>
         </main>

@@ -1,7 +1,7 @@
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 let listTypes = [];
 let countClick = 0; 
-//display-------------------------------------------------------------
+
 function colorOfCard(color){
     switch(color){
         case"normal":{
@@ -114,11 +114,11 @@ function showDetailPage(data) {
     const main = document.getElementById("main_inner"); 
     main.style.setProperty("display", "none");
     console.log(data.name);
-    const card = document.getElementById("main_specific");
+    const element = document.getElementById("main_specific");
     const nameElement = document.createElement('h2');
     nameElement.className = "displayCoi";
     nameElement.textContent = data.name;
-    card.appendChild(nameElement);
+    element.appendChild(nameElement);
 } 
 
 function createButton(content, color, parent_query, child_className, i){
@@ -165,13 +165,13 @@ function createButton(content, color, parent_query, child_className, i){
 function displayNotFound(){
     const main = document.getElementById("main");
     const box = document.createElement("div"); 
-    box.classList = "remove notFound";
-    box.textContent = "NotFound";
+    box.classList = "removeN notFound";
+    box.textContent = "Not Found";
     main.appendChild(box);
 }
 
-function removeCard(){
-    const cardDef = document.querySelectorAll(".remove"); 
+function removeCard(className){
+    const cardDef = document.querySelectorAll(className); 
         cardDef.forEach(element => {
             element.style.setProperty("display", "none"); 
         });
@@ -287,7 +287,8 @@ function searchBy(){
         event.preventDefault(); 
         const input = document.getElementById("searchBar_input").value; 
         let countFinding = 0;
-        removeCard();
+        removeCard(".remove");
+        removeCard(".removeN");
         if (input == ""){
             renderCardByCount();
         }
@@ -313,7 +314,8 @@ function searchBy(){
                                     const name = sub.results[n].name;
                                     if(name.includes(input)){
                                         const apiURL = sub.results[n].url;
-                                        removeCard();
+                                        removeCard(".remove");
+                                        removeCard(".removeN");
                                         getDataEachElement(apiURL)
                                         .then(data => {
                                             createCard(data);
@@ -356,7 +358,8 @@ function sortEvolve(id){
                                     const name = sub.results[n].name;
                                     if(name.includes(content)){
                                         const apiURL = sub.results[n].url;
-                                        removeCard();
+                                        removeCard(".remove");
+                                        removeCard(".removeN");
                                         getDataEachElement(apiURL)
                                         .then(data => {
                                             createCard(data);
@@ -389,58 +392,53 @@ function filterType(){
     const button = document.createElement("div"); 
     button.textContent = "Filter"; 
     button.classList = "button--filter button"; 
-    button.addEventListener("click", function(){
+    button.addEventListener("click", function(event){
+        event.preventDefault();
         const leng = listTypes.length; 
-        let countFinding = 0;
-        removeCard();
-            getListAPI(1,"all")
-                .then(list =>{
-                    const max = (Math.ceil(list.count/ 20)) - 1;
-                    for (let i = 1; i <= max; i++){
-                        getListAPI(i, "all")
-                            .then(sub => {
-                                for(let n = 0; n <20; n++){
-                                    const name = sub.results[n].name;
-                                    const apiURL = sub.results[n].url;
-                                    removeCard();
-                                    getDataEachElement(apiURL)
-                                        .then(data => {
-                                            let dataTypes = [];
-                                            data.types.forEach(e => {
-                                                dataTypes.push(e.type.name);
-                                            })
-                                            const commonCount = countCommonElements(dataTypes, listTypes);
-                                            if (commonCount == leng){
-                                                createCard(data);
-                                                countFinding++;
-                                            }
-                                             
-                                        })
-                                        .catch(error => {
-                                            console.error("Error fetching API data:", error);
-                                        })       
-                                    
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Error fetching API data:", error);
-                            });   
-                    }
-                    if(countFinding == 0){
-                        displayNotFound();
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching API data:", error);
-                });   
-        
-
-        // }
+        let countR = 0;
+        removeCard(".remove");
+        removeCard(".removeN");
+        getListAPI(1,"all")
+        .then(list =>{
+            const max = (Math.ceil(list.count/ 20)) - 1;
+            for (let i = 1; i <= max; i++){
+                getListAPI(i, "all")
+                    .then(sub => {
+                        removeCard(".removeN");
+                        for(let n = 0; n <20; n++){
+                            const apiURL = sub.results[n].url;
+                            getDataEachElement(apiURL)
+                                .then(data => {
+                                    let dataTypes = [];
+                                    data.types.forEach(e => {
+                                        dataTypes.push(e.type.name);
+                                    })
+                                    const commonCount = countCommonElements(dataTypes, listTypes);
+                                    if (commonCount == leng){
+                                        countR++;
+                                        createCard(data);
+                                    } 
+                                })
+                                .catch(error => {
+                                    console.error("Error fetching API data:", error);
+                                })        
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching API data:", error);
+                    })
+            }
+            if(countR == 0){
+                displayNotFound();
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching API data:", error);
+        });   
     })
     main.appendChild(button);
 }
 
-//call--------------------------------------------------------------------------
 renderCardByCount();
 renderButton("type", "white", ".filter_types", "filter_type");
 searchBy();
