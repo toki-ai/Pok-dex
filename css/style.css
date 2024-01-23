@@ -29,7 +29,7 @@ header a {
 
 
 .container{
-    max-width: 1400px;
+    min-width: 1380px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;

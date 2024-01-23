@@ -1,6 +1,11 @@
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-let listTypes = [];
+const apiURL = 'https://pokeapi.co/api/v2/'; 
+
 let countClick = 0; 
+let listTypes = [];
+let autoLoad = true; 
+const sumOfPokemon = 1302;
+const sumOfTypes = 20; 
 
 function colorOfCard(color){
     switch(color){
@@ -74,9 +79,11 @@ function createCard(data) {
     const gradien = `linear-gradient(to top,${color} 20%, rgb(5,11,26) 60% )`;
     card.style.setProperty('background', gradien);
     card.classList = "pokemon-card remove";
-    card.addEventListener('click', function() {
-        showDetailPage(data);
+
+    card.addEventListener('click', function(){
+        renderDetailPage(data);
     });
+
     const imageBox = document.createElement('div');
     imageBox.className ='image-box';
     card.appendChild(imageBox);
@@ -110,13 +117,11 @@ function createCard(data) {
     container.appendChild(card);
 }
 
-function showDetailPage(data) {
-    const cards = document.getElementById("main_inner"); 
-    cards.style.setProperty("display", "none");
+function createDetailImg(data){
     const main = document.getElementById("main_specific");
-
     const specific_main = document.createElement("div");
     specific_main.classList = "specific_main";
+
     const backButton = document.createElement("div"); 
     backButton.className = "button--back"; 
     backButton.textContent = "🔙";
@@ -145,7 +150,10 @@ function showDetailPage(data) {
     namedE.textContent = `${name.charAt(0).toUpperCase() + name.slice(1)}`;
     namedE.style.setProperty("background-color", color);
     specific_main.appendChild(namedE);
+}
 
+function createDetailStats(data){
+    const main = document.getElementById("main_specific");
     const specific_stats = document.createElement("div"); 
     specific_stats.classList = "specific_stats";
 
@@ -190,82 +198,77 @@ function showDetailPage(data) {
         types.appendChild(type);
     }
     specific_stats.appendChild(types);
-
-    const statsTable = document.createElement("div"); 
-
-    specific_stats.appendChild(statsTable);
-
     main.appendChild(specific_stats);
-    
-} 
+}
 
-function createButton(content, color, parent_query, child_className, i){
+function createTypesButton(content, color){
+    const child_className = 'filter_type';
+    const parent_query = '.filter_types';
+
     const types = document.querySelector(parent_query);
     const buttonType = document.createElement("div");
     buttonType.className = child_className; 
-    const id = `${child_className}${i}`; 
     buttonType.textContent = content;
     const boder = `2px solid ${color}`;
     const shadow = `0 0 2px ${color}`
     buttonType.style.setProperty("border", boder);
     buttonType.style.setProperty("box-shadow", shadow); 
-    buttonType.style.setProperty("box-shadow", shadow); 
     buttonType.style.setProperty("color", color); 
+
     let isClicked = false; 
-        buttonType.addEventListener("click", function(event){
-            event.preventDefault(); 
-                const maxClick = 2;
-                if (!isClicked) {
-                    if (countClick < maxClick){
-                        this.style.setProperty("background-color", `${color}`);
-                        this.style.setProperty("color", 'black');
-                        countClick++; 
-                        listTypes.push(this.textContent);
-                        isClicked = !isClicked;
-                    } 
-                    else{
-                        alert(`${maxClick} is maximum!`);
-                    }
-                } else {
-                    for (let i = 0; i < listTypes.length; i++){
-                        if (listTypes[i] == (this.textContent)){
-                            this.style.setProperty("background-color", "transparent");
-                            this.style.setProperty("color", `${color}`);
-                            listTypes.splice(i, 1);
-                            countClick--;
-                            isClicked = !isClicked;
-                        }
-                    }
+    buttonType.addEventListener("click", function(event){
+        event.preventDefault(); 
+        const maxClick = 2;
+        if (!isClicked) {
+            if (countClick < maxClick){
+                this.style.setProperty("background-color", `${color}`);
+                this.style.setProperty("color", 'black');
+                countClick++; 
+                listTypes.push(this.textContent);
+                isClicked = !isClicked;
+            } 
+            else{
+                alert(`${maxClick} is maximum!`);
+            }
+        } else {
+            for (let i = 0; i < listTypes.length; i++){
+                if (listTypes[i] == (this.textContent)){
+                    this.style.setProperty("background-color", "transparent");
+                    this.style.setProperty("color", `${color}`);
+                    listTypes.splice(i, 1);
+                    countClick--;
+                    isClicked = !isClicked;
                 }
-        })
+            }
+        }
+    })
     types.appendChild(buttonType);
 }
 
-function displayNotFound(){
+function displayNotFound(content = "Loading..."){
     const main = document.getElementById("main");
     const box = document.createElement("div"); 
-    box.classList = "removeN notFound";
-    box.textContent = "Not Found";
+    box.classList = "remove notFound";
+    box.textContent = content;
     main.appendChild(box);
 }
 
 function removeCard(className){
-    const cardDef = document.querySelectorAll(className); 
-        cardDef.forEach(element => {
-            element.style.setProperty("display", "none"); 
-        });
+    const card = document.querySelectorAll(className); 
+    card.forEach(element => {
+        element.style.setProperty("display", "none"); 
+    });
 }
 
-//fetch API---------------------------------------------------------------------
-function getListAPI(count = 1, option){
-    let apiUrl;
+function getListAPI(count = 1, option = 'all'){
+    let apiUrl; 
     if (option == "all"){
         if (count > 0){
             count = count - 1;
             count = count * 20;
         } 
-        apiUrl = `https://pokeapi.co/api/v2/pokemon/?offset=${count}&limit=20`;}
-    else if (option == "type"){
+        apiUrl = `${apiURL}pokemon/?offset=${count}&limit=20`;
+    }else if (option == "type"){
         apiUrl = `https://pokeapi.co/api/v2/type/`;
     }
     return fetch(apiUrl)
@@ -287,72 +290,54 @@ function getDataEachElement(apiURL){
         });
 }
 
-function getListByLocation(){
-    getListAPI(1, "region")
-        .then()
-}
-
-//Render------------------------------------------------------------------------
-function renderCard(count) {
+function renderListCard(count = 1) {
     getListAPI(count, "all")
         .then(list => {
             const results = list.results;
-            (async () => {
-                for (let i = 0; i < results.length; i++) {
-                    try {
-                        const APIurl = results[i].url;
-                        getDataEachElement(APIurl)
-                            .then(data => {
-                                createCard(data);
-                            });
-                        await delay(100);
-                    } catch (error) {
-                        console.error(`Error fetching Pokemon ID ${i + 1}: ${error.message}`);
-                    }
+            for (let i = 0; i < results.length; i++) {
+                try {
+                    const APIurl = results[i].url;
+                    getDataEachElement(APIurl)
+                        .then(data => {
+                            createCard(data);
+                        })
+                } catch (error) {
+                    console.error(`Error fetching Pokemon ID ${i + 1}: ${error.message}`);
                 }
-            })();
+            }
         })
         .catch(error => {
             console.error(`Error fetching API data: ${error.message}`);
         });
 }
 
-function renderCardByCount() {
-    getListAPI(1, "all")
-        .then(list => {
-            const maxCount = Math.ceil(list.count/ 20);
-            const divMore = document.getElementById("button--more");
-            const moreButton = document.createElement("div");
-            moreButton.classList = "button--more remove button";
-            moreButton.textContent = "More";
-            divMore.appendChild(moreButton);
-
-            let count = 1; 
-            renderCard(count);
-
-            moreButton.addEventListener("click", function(event){
-                count++;
-                event.preventDefault();
-                if (count <= maxCount){
-                    renderCard(count);
-                }
-            }) 
-        })
-        .catch(error => {
-            console.error("Error fetching API data:", error);
-        });   
+function renderAll(){
+    let index = 1;
+    let isLoading = false; 
+    let max = Math.floor(sumOfPokemon/20); 
+    renderListCard(1);
+    window.addEventListener("scroll", async function(event) {
+        event.preventDefault();
+        if(autoLoad == true){
+            if (!isLoading && index <= max && window.scrollY + window.innerHeight >= document.body.scrollHeight - 100) {
+                isLoading = true; 
+                index++;
+                renderListCard(index);
+                isLoading = false; 
+            }
+        }
+    })  
 }
 
-function renderButton(type, color, parent_query, child_className){
+function renderTypesButton(type){
+    let color; 
     getListAPI(1, type)
         .then(data => {
             const count = data.count; 
             for (let i = 0; i <= count; i++){
                 const content = data.results[i].name; 
-                if(type == "type"){
-                    color = colorOfCard(content);
-                }
-                createButton(content, color, parent_query, child_className, i);
+                color = colorOfCard(content);
+                createTypesButton(content, color);
             }
         })
         .catch(error => {
@@ -360,167 +345,139 @@ function renderButton(type, color, parent_query, child_className){
         }); 
 }
 
-function searchBy(){
-    const form = document.getElementById("searchBar");
-    form.addEventListener("submit", function(event){
-        event.preventDefault(); 
-        const input = document.getElementById("searchBar_input").value; 
-        let countFinding = 0;
-        removeCard(".remove");
-        removeCard(".removeN");
-        if (input == ""){
-            renderCardByCount();
-        }
-        else if (!isNaN(input)){
-            const id = input; 
-            const apiURL = `https://pokeapi.co/api/v2/pokemon/${id}/`;
-                        getDataEachElement(apiURL)
+function renderDetailPage(data) {
+    const cards = document.getElementById("main_inner"); 
+    cards.style.setProperty("display", "none");
+    createDetailImg(data); 
+    createDetailStats(data);
+} 
+
+function searchID(input){
+    removeCard(".remove");
+    autoLoad = false; 
+    const APIurl = `${apiURL}pokemon/${input}/`; 
+            getDataEachElement(APIurl)
+                .then(data => {
+                    createCard(data);
+                })
+                .catch(e => {
+                    console.error("Not Found", e);
+                    displayNotFound("Not Found");
+                }) 
+}
+
+function searchName(input){
+    removeCard(".remove");
+    autoLoad = false; 
+    let count = 0; 
+    let max = Math.floor(sumOfPokemon/20); 
+    for (let i = 1; i <= max; i++){
+        getListAPI(i, "all")
+            .then(list => {
+                for(let n = 0; n < list.results.length; n++){
+                    const name = list.results[n].name;
+                    if(name.includes(input)){
+                        removeCard(".remove"); 
+                        const APIurl = list.results[n].url;
+                        getDataEachElement(APIurl)
                             .then(data => {
                                 createCard(data);
-                            })
-                            .catch(error => {
-                                console.error("Not Found");
-                                displayNotFound();
-                            })       
-        } else{ 
-            getListAPI(1,"all")
-                .then(list =>{
-                    const max = (Math.ceil(list.count/ 20)) - 1;
-                    for (let i = 1; i <= max; i++){
-                        getListAPI(i, "all")
-                            .then(sub => {
-                                for(let n = 0; n <20; n++){
-                                    const name = sub.results[n].name;
-                                    if(name.includes(input)){
-                                        const apiURL = sub.results[n].url;
-                                        removeCard(".remove");
-                                        removeCard(".removeN");
-                                        getDataEachElement(apiURL)
-                                        .then(data => {
-                                            createCard(data);
-                                            countFinding++;
-                                        })
-                                        .catch(error => {
-                                            console.error("Error fetching API data:", error);
-                                        })       
-                                    }
-                                }
+                                count++;
                             })
                             .catch(error => {
                                 console.error("Error fetching API data:", error);
-                            });   
+                            })          
                     }
-                    if(countFinding == 0){
-                        displayNotFound();
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching API data:", error);
-                });   
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching API data:", error);
+            }); 
+    }
+    if(count == 0){
+        displayNotFound("Not Found");
+    }
+}
+
+function searchBy(){
+        const input = document.getElementById("searchBar_input").value; 
+        if (input == ""){
+            window.location.href = "pokedex.html";
+        }else if(!isNaN(input)){
+            searchID(input);
+        }else{
+            searchName(input);
         }
-    })
 }
 
 function sortEvolve(id){
-    var myDiv = document.getElementById(id);
-    if (myDiv) {
-        myDiv.addEventListener('click', function() {
-            const content = `-${(this.innerHTML).toLocaleLowerCase()}`;
-            console.log(content)
-            getListAPI(1,"all")
-                .then(list =>{
-                    const max = (Math.ceil(list.count/ 20)) - 1;
-                    for (let i = 1; i <= max; i++){
-                        getListAPI(i, "all")
-                            .then(sub => {
-                                for(let n = 0; n <20; n++){
-                                    const name = sub.results[n].name;
-                                    if(name.includes(content)){
-                                        const apiURL = sub.results[n].url;
-                                        removeCard(".remove");
-                                        removeCard(".removeN");
-                                        getDataEachElement(apiURL)
-                                        .then(data => {
-                                            createCard(data);
-                                        })
-                                        .catch(error => {
-                                            console.error("Error fetching API data:", error);
-                                        })       
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Error fetching API data:", error);
-                            });   
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching API data:", error);
-                });   
-        });
-    }
+    const divEvolve = document.getElementById(id);
+    divEvolve.addEventListener('click', function() {
+    const content = `-${(this.innerHTML).toLocaleLowerCase()}`;
+    searchName(content);
+    })
 }
 
 function countCommonElements(array1, array2) {
     var commonElements = array1.filter(element => array2.includes(element));
     return commonElements.length;
-  }
-
-function filterType(){
-    const main = document.getElementById("button--filter"); 
-    const button = document.createElement("div"); 
-    button.textContent = "Filter"; 
-    button.classList = "button--filter button"; 
-    button.addEventListener("click", function(event){
-        event.preventDefault();
-        const leng = listTypes.length; 
-        let countR = 0;
-        removeCard(".remove");
-        removeCard(".removeN");
-        getListAPI(1,"all")
-        .then(list =>{
-            const max = (Math.ceil(list.count/ 20)) - 1;
-            for (let i = 1; i <= max; i++){
-                getListAPI(i, "all")
-                    .then(sub => {
-                        removeCard(".removeN");
-                        for(let n = 0; n <20; n++){
-                            const apiURL = sub.results[n].url;
-                            getDataEachElement(apiURL)
-                                .then(data => {
-                                    let dataTypes = [];
-                                    data.types.forEach(e => {
-                                        dataTypes.push(e.type.name);
-                                    })
-                                    const commonCount = countCommonElements(dataTypes, listTypes);
-                                    if (commonCount == leng){
-                                        countR++;
-                                        createCard(data);
-                                    } 
-                                })
-                                .catch(error => {
-                                    console.error("Error fetching API data:", error);
-                                })        
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error fetching API data:", error);
-                    })
-            }
-            if(countR == 0){
-                displayNotFound();
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching API data:", error);
-        });   
-    })
-    main.appendChild(button);
 }
 
-renderCardByCount();
-renderButton("type", "white", ".filter_types", "filter_type");
-searchBy();
-filterType();
+function filterType() {
+    const leng = listTypes.length;
+    let countR = 0;
+    removeCard(".remove");
+    autoLoad = false; 
+    const max = Math.ceil(sumOfPokemon/ 20);
+    for (let i = 1; i <= max; i++ ) {
+        getListAPI(i, "all")
+            .then(list => {
+                for (let n = 0; n < list.results.length; n++) {
+                    const APIurl = list.results[n].url;
+                    getDataEachElement(APIurl)
+                        .then(data => {
+                            let dataTypes = [];
+                            data.types.forEach(e => {
+                                dataTypes.push(e.type.name);
+                            });
+                            const commonCount = countCommonElements(dataTypes, listTypes);
+                            if (commonCount == leng) {
+                                removeCard(".notFound");
+                                countR++;
+                                createCard(data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching API data:", error);
+                        });
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching API data:", error);
+            });
+    }   
+    if (countR == 0) {
+        displayNotFound("Not Found");
+    }
+}
+
+const search = document.getElementById("searchBar_submit");
+    search.addEventListener("click", function(event){
+        event.preventDefault();  
+        searchBy();
+})
+
+const main = document.getElementById("button--filter"); 
+const button = document.createElement("div"); 
+button.textContent = "Filter"; 
+button.classList = "button--filter button"; 
+button.addEventListener("click", function(event){
+    event.preventDefault(); 
+    filterType();
+})
+main.appendChild(button);
+
+renderAll();
+renderTypesButton("type");
 sortEvolve("mega");
 sortEvolve("gmax");
